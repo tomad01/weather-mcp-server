@@ -42,6 +42,129 @@ TOOLS = {
 # Store active connections
 connections = {}
 
+def get_tool_schema(tool_name: str) -> Dict[str, Any]:
+    """Generate proper input schema for each tool"""
+    schemas = {
+        "get_current_weather": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "City name, coordinates (lat,lon), IP address, or postcode"
+                },
+                "include_air_quality": {
+                    "type": "boolean",
+                    "description": "Include air quality data in response",
+                    "default": False
+                }
+            },
+            "required": ["location"]
+        },
+        "get_weather_forecast": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "City name, coordinates (lat,lon), IP address, or postcode"
+                },
+                "days": {
+                    "type": "integer",
+                    "description": "Number of forecast days (1-14)",
+                    "minimum": 1,
+                    "maximum": 14,
+                    "default": 3
+                },
+                "include_air_quality": {
+                    "type": "boolean",
+                    "description": "Include air quality data",
+                    "default": False
+                },
+                "include_alerts": {
+                    "type": "boolean",
+                    "description": "Include weather alerts",
+                    "default": False
+                }
+            },
+            "required": ["location"]
+        },
+        "get_weather_history": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "City name, coordinates (lat,lon), IP address, or postcode"
+                },
+                "date": {
+                    "type": "string",
+                    "description": "Date in YYYY-MM-DD format",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                }
+            },
+            "required": ["location", "date"]
+        },
+        "get_air_quality": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "City name, coordinates (lat,lon), IP address, or postcode"
+                }
+            },
+            "required": ["location"]
+        },
+        "get_astronomy_data": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "City name, coordinates (lat,lon), IP address, or postcode"
+                },
+                "date": {
+                    "type": "string",
+                    "description": "Date in YYYY-MM-DD format (defaults to today)",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                }
+            },
+            "required": ["location"]
+        },
+        "get_weather_alerts": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "City name, coordinates (lat,lon), IP address, or postcode"
+                }
+            },
+            "required": ["location"]
+        },
+        "search_locations": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query (city name, postcode, etc.)"
+                }
+            },
+            "required": ["query"]
+        },
+        "get_timezone_info": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "City name, coordinates (lat,lon), IP address, or postcode"
+                }
+            },
+            "required": ["location"]
+        }
+    }
+    
+    return schemas.get(tool_name, {
+        "type": "object",
+        "properties": {},
+        "required": []
+    })
+
 @app.get("/")
 async def root():
     return {
@@ -98,11 +221,7 @@ async def sse_endpoint(request: Request):
                             {
                                 "name": name,
                                 "description": func.__doc__ or f"Weather tool: {name}",
-                                "inputSchema": {
-                                    "type": "object",
-                                    "properties": {},
-                                    "required": []
-                                }
+                                "inputSchema": get_tool_schema(name)
                             }
                             for name, func in TOOLS.items()
                         ]
@@ -187,11 +306,7 @@ async def message_endpoint(request: Request):
                         {
                             "name": name,
                             "description": func.__doc__ or f"Weather tool: {name}",
-                            "inputSchema": {
-                                "type": "object",
-                                "properties": {},
-                                "required": []
-                            }
+                            "inputSchema": get_tool_schema(name)
                         }
                         for name, func in TOOLS.items()
                     ]
