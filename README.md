@@ -20,7 +20,7 @@ A Model Context Protocol (MCP) server that provides comprehensive weather data u
 ### Docker
 ```bash
 docker build . -t sse_weather_server
-docker run -p 8001:8001 -e WEATHER_API_KEY:xxxx sse_weather_server
+docker run -p 8001:8001 -e WEATHER_API_KEY=xxxx sse_weather_server
 ```
 ### Directly on your machine
 
@@ -56,13 +56,37 @@ LOG_LEVEL=INFO
 
 ## Usage
 
-### Running the Server
+The same MCP server (defined in `main.py`) can be run over three different
+transports depending on how your client connects.
+
+### SSE transport (HTTP, port 8001)
 
 ```bash
-python sse_server.py
+python server_sse.py
 ```
 
-The server runs as an MCP server using http sse transport.
+This is the transport used by the Docker image.
+
+### Streamable HTTP transport (port 8002)
+
+```bash
+python server_streamable.py
+```
+
+### stdio transport (local)
+
+```bash
+python main.py
+```
+
+### Testing the SSE server
+
+With the SSE server running on port 8001, you can exercise it with the bundled
+test client:
+
+```bash
+python client.py
+```
 
 ### Available Tools
 
@@ -81,9 +105,3 @@ The server runs as an MCP server using http sse transport.
 - `search_locations(query)` - Find locations
 - `get_timezone_info(location)` - Timezone information
 - `get_sports_data(location)` - Sports events weather
-
-### Running the Server as stdio transport (localy)
-
-```bash
-python main.py
-```

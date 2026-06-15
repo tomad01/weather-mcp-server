@@ -14,4 +14,4 @@ RUN pip install --upgrade pip \
 EXPOSE 8001
 
 # Start the MCP server
-CMD ["python", "server.py"]
+CMD ["python", "server_sse.py"]
