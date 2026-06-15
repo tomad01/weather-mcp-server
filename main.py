@@ -20,7 +20,8 @@ WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 # Create MCP server
 mcp = FastMCP(
     name="WeatherMCP",
-    prompt="Weather server providing current conditions, forecasts, air quality, and astronomy data via WeatherAPI.com"
+    instructions="Weather server providing current conditions, forecasts, air quality, and astronomy data via WeatherAPI.com",
+    host="0.0.0.0",
 )
 
 # WeatherAPI base configuration

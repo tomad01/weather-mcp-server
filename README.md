@@ -20,7 +20,7 @@ A Model Context Protocol (MCP) server that provides comprehensive weather data u
 ### Docker
 ```bash
 docker build . -t sse_weather_server
-docker run -p 8001:8001 -e WEATHER_API_KEY:xxxxxxx sse_weather_server
+docker run -p 8001:8001 -e WEATHER_API_KEY:xxxx sse_weather_server
 ```
 ### Directly on your machine
 
